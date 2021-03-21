@@ -63,7 +63,7 @@ class HueApi:
         self.base_url = f'http://{bridge_ip_address}/api/{user_name}'
 
     def save_api_key(self, *args, **kwargs):
-        cache_file = kwargs.get('cache_file') or self.find_cache_file()
+        cache_file = kwargs.get('cache_file.ini') or self.find_cache_file()
         with open(cache_file, 'wb') as pickle_file:
             cache = {
                 'bridge_ip_address': self.bridge_ip_address,
@@ -131,11 +131,15 @@ class HueApi:
             for scene in self.grouped_scenes[group]:
                 print(scene)
 
-    def filter_lights(self, indices):
+    def filter_lights(self, indices=[]):
+        light_return = []
         if not indices:
-            return self.lights
-        return [light for light in self.lights if light.id in indices]
-
+            light_return = self.lights
+        #return [light for light in self.lights if light.id == indices]
+        for l in self.lights:
+            if str(l.id) in indices:
+                light_return.append(l)
+        return light_return
     # Lights State Control
 
     def turn_on(self, indices=[]):
